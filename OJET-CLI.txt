@@ -1,0 +1,23 @@
+Please use HOTSPOT
+
+Steps to install OJET-CLI and create blank OJET Application
+
+
+Open NodeJS Command Prompt
+
+Type-->    C:\Windows\System32>cd\
+
+Type--->   C:\>mkdir test
+
+Type---> C:\>cd test
+
+Type---> npm install -g @oracle/ojet-cli
+
+Type--->ojet create test-ui
+
+Type---->cd test-ui
+
+Type---->ojet serve
+
+
+Single Page Application will be served in google chrome browser on port 8000        
