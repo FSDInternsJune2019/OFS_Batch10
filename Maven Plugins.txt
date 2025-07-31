@@ -1,0 +1,78 @@
+
+
+<plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-pmd-plugin</artifactId>
+      <version>3.26.0</version>
+      <executions>
+        <execution>
+          <id>pmd-check</id>
+          <phase>verify</phase>
+          <goals>
+            <goal>check</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+
+pom.xml->goal->pmd:pmd 
+
+===============================================================================
+
+
+<plugin>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-maven-plugin</artifactId>
+      <version>4.9.3.0</version>
+      <dependencies>
+        <dependency>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs</artifactId>
+          <version>4.9.3</version>
+        </dependency>
+      </dependencies>
+      <executions>
+        <execution>
+          <phase>verify</phase>
+          <goals>
+            <goal>check</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+
+pom.xml->goal->spotbugs:spotbugs
+
+=======================================================================================
+
+
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-checkstyle-plugin</artifactId>
+  <version>3.3.0</version> <!-- Use latest version -->
+  <executions>
+    <execution>
+      <phase>verify</phase>
+      <goals>
+        <goal>check</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+
+
+mvn site
+mvn checkstyle:checkstyle
+
+
+<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.3.1</version>
+            <configuration>
+                <source>17</source>
+            </configuration>
+        </plugin>
+
+
+right click -> pom.xml->goal->javadoc:javadoc 
