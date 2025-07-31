@@ -1,0 +1,8 @@
+JavaScript data types
+JavaScript Object
+JavaScript Function--function,annoymous function,arrow function, function expressions
+Arrays
+ES6--classes,Arrow Functions, let,const,Symbol, spread syntax, destructuring assignment
+Ajax
+Promise
+
