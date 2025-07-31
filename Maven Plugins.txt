@@ -61,8 +61,8 @@ pom.xml->goal->spotbugs:spotbugs
 </plugin>
 
 
-mvn site
-mvn checkstyle:checkstyle
+
+right click -> pom.xml->goal->checkstyle:checkstyle
 
 
 <plugin>
