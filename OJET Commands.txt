@@ -1,0 +1,15 @@
+npm install -g @oracle/ojet-cli
+
+ojet create <app name>
+
+ojet create simple-ui
+
+ojet create simple-ui --template=basic
+
+ojet create simple-ui --template=navbar
+
+npx @oracle/ojet-cli create alm-ui --template=navdrawer --typescript
+
+ojet serve
+
+ojet serve --no-livereload
