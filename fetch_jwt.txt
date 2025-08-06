@@ -1,0 +1,43 @@
+fetch('https://your-api.com/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ username: 'user', password: 'pass' })
+})
+.then(response => response.json())
+.then(data => {
+  localStorage.setItem('jwt', data.token); // Store token securely
+});
+
+
+========================================
+
+const token = localStorage.getItem('jwt');
+
+fetch('https://your-api.com/protected-endpoint', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => response.json())
+.then(data => {
+  console.log(data);
+});
+
+============================
+
+const url = 'https://your-api.com/data';
+const token = localStorage.getItem('jwt');
+
+const fetchData = () => {
+  return fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  }).then(res => res.json());
+};
+
+// Then use fetchData to populate your DataProvider
