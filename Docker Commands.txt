@@ -1,0 +1,487 @@
+------installation-----------
+sudo apt-get update -y && sudo apt-get install -y docker.io
+-------granting permission-------
+sudo chown ubuntu /var/run/docker.sock
+------testing if installation done------
+docker version
+
+
+docker container run -d sabbir/tomcat:16
+java --version 
+docker container ls
+docker container inspect inspiring_wilbur 
+curl 172.17.0.2:8080
+curl 172.17.0.2:8080/demo
+ls -ltr
+ps -ef | grep -i tomcat
+docker container top inspiring_wilbur 
+java --version
+docker container ls
+docker container logs inspiring_wilbur 
+docker image ls 
+docker image history sabbir/tomcat:16
+
+
+docker container ls
+docker container run sabbir/ubuntu:appBuild
+docker container ls
+docker container ls -a
+java --version
+docker container run sabbir/ubuntu:appBuild java --version
+mvn --version 
+docker container run sabbir/ubuntu:appBuild mvn --version
+docker container ls -a
+
+docker containers ls -a
+docker container ls -a
+docker image ls
+docker df
+docker system df
+   39  docker container prune 
+   40  docker system df
+   41  ls -ltr /var/lib/docker/
+   42  sudo ls -ltr /var/lib/docker/
+   43  sudo ls -ltr /var/lib/docker/image
+   44  sudo ls -ltr /var/lib/docker/image/overlay2
+   45  docker image history sabbir/ubuntu:appBuild 
+   46  sudo ls -ltr /var/lib/docker/image/overlay2/layerdb
+   47  sudo ls -ltr /var/lib/docker/image/overlay2/layerdb/sha256
+   48  history 
+   49  docker container ls -a
+   50  docker container stop inspiring_wilbur 
+   51  docker container ls -a
+   52  docker container start inspiring_wilbur 
+   53  docker container ls -a
+   54  docker container stop inspiring_wilbur 
+   55  docker container ls -a
+   56  docker container rm inspiring_wilbur 
+   57  docker container ls -a
+   58  docker container run sabbir/ubuntu:appBuild mvn --version
+
+60  docker container run -d sabbir/tomcat:16
+   61  docker container ls -a
+   63  docker container exec -it epic_aryabhata java -version
+   65  docker container exec -it epic_aryabhata /bin/bash
+java -version
+cat /etc/os-release
+exit
+
+   75  docker container run -i -t --name interactive_container --hostname interactive_container sabbir/ubuntu:appBuild /bin/bash
+
+docker container run -d --name tomcat -p 30000:8080 sabbir/tomcat:16
+
+87  ifconfig
+   88  docker container run -d --name tomcat-9 -p 31000:8080 sabbir/tomcat:9.0.52
+   89  docker container run -d --name tomcat-10 -p 32000:8080 sabbir/tomcat:10.0.13
+   90  ifconfig
+   91  docker container ls
+
+docker container stop `docker container ls -q`
+
+
+=================images====================
+
+  content of docker file
+  
+  touch java.dockerfile
+  vi java.dockerfile
+   esc+wq to save
+  135  docker image build . -f java.dockerfile -t jdk:latest
+  136  docker image ls
+  137  docker image ls -a
+  138  docker image history jdk:latest 
+  //docker image tag 615bda0c32c5 ubuntu:updated
+  139  docker image tag 87df14e80f4e ubuntu:updated
+  140  docker image ls -a
+  141  docker image ls
+  128  docker container run ubuntu:22.04 java -version
+  130  docker container run jdk:latest java -version
+
+
+  152  docker image build . -f maven.dockerfile -t maven:latest
+  153  docker container run ubuntu:22.04 mvn --version
+  154  docker container run jdk:latest mvn --version
+  155  docker container run maven:latest mvn --version
+  156  docker image history ubuntu:22.04 
+  157  docker image history jdk:latest 
+  158  docker image history maven:latest
+
+  160  docker image build . -f appBuild.dockerfile -t appbuild:latest
+  161  docker container run maven:latest git --version
+  162  docker container run maven:latest pwd
+  163  docker container run appbuild:latest git --version
+  164  docker container run appbuild:latest pwd
+  165  docker container run appbuild:latest
+
+
+FROM maven:latest
+RUN apt-get install -y git
+RUN git clone https://github.com/kul-samples/java-2.git /app
+WORKDIR /app
+CMD ["mvn","clean","package"]
+
+#!/bin/bash
+git clone -b ${BRANCH} https://github.com/kul-samples/${REPOSITORY}.git /app
+cd /app
+mvn clean package
+FROM git:latest
+ENV REPOSITORY java-2
+ENV BRANCH master
+COPY build.sh /build.sh
+CMD ["sh","build.sh"]
+  173  docker image build . -f generic.appbuild.dockerfile -t buildjavaapp:latest
+  174  docker container run buildjavaapp:latest 
+  176  docker container run -e REPOSITORY=sample-java-app -e BRANCH=main buildjavaapp:latest
+
+  185  docker image ls 
+  186  docker image tag buildjavaapp:latest sabbir/buildjavaapp:latest
+  187  docker image ls 
+  189  docker login -u sabbir
+  190  docker image push sabbir/buildjavaapp:latest
+
+
+docker image build . -f tomcat.dockerfile -t tomcat:latest
+
+docker container run tomcat
+
+
+  128  docker image build . -f tomcat.dockerfile -t sabbir/tomcat:10.0.20 --build-arg DOWNLOAD_URL=https://dlcdn.apache.org/tomcat/tomcat-10/v10.0.20/bin/apache-tomcat-10.0.20.tar.gz --build-arg TOMCAT_VERSION=10.0.20
+  129  docker container run -d -p 30000:8080 sabbir/tomcat:10.0.20 
+  130  docker container ls
+
+
+FROM jdk:latest
+RUN apt-get update -y && apt-get install -y wget
+ARG DOWNLOAD_URL
+RUN wget ${DOWNLOAD_URL}
+ARG TOMCAT_VERSION
+RUN tar -xvf apache-tomcat-${TOMCAT_VERSION}.tar.gz && rm -rf apache-tomcat-${TOMCAT_VERSION}.tar.gz && mv apache-tomcat-${TOMCAT_VERSION} tomcat
+WORKDIR /tomcat/bin
+CMD ["./catalina.sh","run"]
+
+ 140  sudo ls -ltr /var/lib/docker/volumes
+  141  docker container run -v mvn_repository:/root/.m2/repository sabbir/buildjavaapp:latest 
+  142  sudo ls -ltr /var/lib/docker/volumes
+  143  sudo ls -ltr /var/lib/docker/volumes/mvn_repository
+  144  sudo ls -ltr /var/lib/docker/volumes/mvn_repository/_data
+  145  docker container run -v mvn_repository:/root/.m2/repository sabbir/buildjavaapp:latest 
+  146  sudo ls -ltr /var/lib/docker/volumes/mvn_repository/_data/org/springframework/boot/demo-boot/1.0-RELEASE
+  147  docker container run -v mvn_repository:/root/.m2/repository sabbir/buildjavaapp:latest 
+  148  sudo ls -ltr /var/lib/docker/volumes/mvn_repository/_data/org/springframework/boot/demo-boot/1.0-RELEASE
+
+
+ 155  docker container run -v mvn_repository:/root/.m2/repository sabbir/buildjavaapp:latest
+  156  docker container run -e REPOSITORY=sample-java-app -e BRANCH=main -v mvn_repository:/root/.m2/repository sabbir/buildjavaapp:latest 
+  161  sudo cp /var/lib/docker/volumes/mvn_repository/_data/org/springframework/boot/demo-boot/1.0-RELEASE/demo-boot-1.0-RELEASE.war .
+  163  sudo mv demo-boot-1.0-RELEASE.war demo.war
+  170  sudo cp /var/lib/docker/volumes/mvn_repository/_data/com/kul-samples/demo/indianstates/1.1/indianstates-1.1.war indianstates.war
+  172  sudo chown ubuntu *.war
+  174  docker image build . -f application.dockerfile -t sabbir/application:demo --build-arg WAR_FILE=demo.war
+  175  docker image build . -f application.dockerfile -t sabbir/application:indianstates --build-arg WAR_FILE=indianstates.war
+  176  docker image history sabbir/application:demo 
+  177  docker image history sabbir/application:indianstates 
+  178  docker container ls -a
+  179  docker container kill elastic_cannon 
+  180  docker container prune
+  181  docker container run -d -p 30000:8080 sabbir/application:demo 
+  182  docker container run -d -p 31000:8080 sabbir/application:indianstates 
+  183  docker container ls
+
+FROM sabbir/tomcat:10.0.20
+ARG WAR_FILE
+COPY ${WAR_FILE} /tomcat/webapps/${WAR_FILE}
+
+docker container kill `docker container ls -q`
+docker container rm `docker container ls -aq`
+docker image rm --force `docker image ls -q`
+docker container run -d -e POSTGRES_PASSWORD=india123 --name postgres postgres:13.6
+docker container ls
+docker container logs postgres
+docker container inspect postgres
+docker container run -it --name psql-client sabbir/ubuntu:psql
+		psql -h 172.17.0.2 -U postgres -d postgres
+		\dt
+		\l
+		\q
+		exit
+
+ 287  docker container kill `docker container ls -q`
+  288  docker container prune 
+  289  docker network create thinknyx --driver bridge --subnet 10.10.10.0/24 --gateway 10.10.10.10
+  290  docker network ls
+  291  docker network inspect thinknyx 
+
+docker container run -d -e POSTGRES_PASSWORD=india123 --name postgres --network thinknyx postgres:13.6
+docker container run -e DB_URL=postgres -e DB_USER=postgres -e PGPASSWORD=india123 --name database-setup --network thinknyx sabbir/nodejs-app:database-setup
+docker container inspect postgres
+docker container run -it --name psql-client --network thinknyx sabbir/ubuntu:psql
+	psql -h postgres -U postgres -d nodejs_demo
+	\dt
+	\q
+	exit
+
+305  docker container run -d -e DB_PWD=india123 -e DB_URL=postgres -p 31000:4000 --name nodejs --network thinknyx sabbir/nodejs-app:v1 
+  306  docker container ls 
+  307  docker container logs nodejs 
+
+
+ 293  docker container run -e DB_URL=postgres -e DB_USER=postgres -e PGPASSWORD=india123 --name database-setup --network thinknyx sabbir/nodejs-app:database-setup
+  294  docker image pull sabbir/nodejs-app:v1
+  295  docker image history sabbir/nodejs-app:v1 
+  296  docker container run -d -e DB_PWD=india123 -e DB_URL=postgres -p 31000:4000 sabbir/nodejs-app:v1 
+  297  docker container ls
+  298  docker container kill pedantic_nash 
+  299  docker container rm pedantic_nash 
+  300  docker container run -d -e DB_PWD=india123 -e DB_URL=postgres -p 31000:4000 --name nodejs sabbir/nodejs-app:v1 
+  301  docker container ls 
+  302  docker container logs nodejs 
+  303  docker container kill nodejs 
+  304  docker container rm nodejs 
+  305  docker container run -d -e DB_PWD=india123 -e DB_URL=postgres -p 31000:4000 --name nodejs --network thinknyx sabbir/nodejs-app:v1 
+  306  docker container ls 
+  307  docker container logs nodejs 
+  308  history 
+  309  docker container kill postgres 
+  310  docker container rm postgres 
+  311  history docker container run -d -e POSTGRES_PASSWORD=india123 --name postgres --network thinknyx postgres:13.6
+  312  docker container run -d -e POSTGRES_PASSWORD=india123 --name postgres --network thinknyx postgres:13.6
+  313  docker container start nodejs 
+  314  docker container logs nodejs 
+  315  docker container ls -a
+  316  docker container start database-setup 
+  317  docker container logs database-setup 
+  318  docker container stop nodejs 
+  319  docker container start nodejs 
+  320  docker container kill postgres 
+  321  docker container rm postgres 
+  322  docker container run -d -e POSTGRES_PASSWORD=india123 --name postgres --network thinknyx -v postgres_data:/var/lib/postgresql/dta postgres:13.6
+  323  docker container ls
+  324  docker container inspect postgres 
+  325  docker container start database-setup 
+  326  docker container logs database-setup 
+  327  docker container start nodejs 
+  328  docker container kill postgres && docker container rm postrges
+  329  docker container rm postgres 
+  330  docker container run -d -e POSTGRES_PASSWORD=india123 --name postgres --network thinknyx -v postgres_data:/var/lib/postgresql/dta postgres:13.6
+  331  docker container start nodejs 
+  332  docker container ls
+  333  docker container kill postgres && docker container rm postgres
+  334  docker container run -d -e POSTGRES_PASSWORD=india123 --name postgres --network thinknyx -v postgres_data:/var/lib/postgresql/data postgres:13.6
+  335  docker container start nodejs 
+  336  docker container start database-setup 
+  337  docker container stop nodejs 
+  338  docker container start nodejs 
+  339  docker container kill postgres && docker container rm postgres
+  340  docker container run -d -e POSTGRES_PASSWORD=india123 --name postgres --network thinknyx -v postgres_data:/var/lib/postgresql/data postgres:13.6
+  341  docker container start nodejs 
+  342  docker container kill `docker container ls -q`
+  343  docker container rm `docker container ls -aq`
+  344  docker container ls 
+  345  docker container ls -a
+  346  sudo ls -ltr /var/lib/docker/volumes/postgres_data/_data
+  347  docker container run -d -e POSTGRES_PASSWORD=india123 --name postgres --network thinknyx -v postgres_data:/var/lib/postgresql/data postgres:13.6
+  348  docker container run -d -e DB_PWD=india123 -e DB_URL=postgres -p 31000:4000 --name nodejs --network thinknyx sabbir/nodejs-app:v1
+
+ 300  docker container kill `docker container ls -q`
+  301  docker container rm `docker container ls -aq'
+
+303  sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  304  sudo chmod +x /usr/local/bin/docker-compose
+  305  docker-compose --version
+
+docker network rm thinknyx 
+
+docker volume prune
+
+compose file=======docker-compose.yml
+
+version: "3.9"
+networks:
+  thinknyx:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.10.10.0/24
+        gateway: "10.10.10.10"
+volumes:
+  postgres_data: {}
+services:
+  postgres:
+    container_name: database
+    image: postgres:13.6
+    environment: 
+    - POSTGRES_PASSWORD=india123
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+    networks:
+    - thinknyx
+  database_setup:
+    container_name: database_setup
+    image: sabbir/nodejs-app:database-setup
+    environment:
+    - DB_USER=postgres
+    - DB_URL=postgres
+    - PGPASSWORD=india123
+    networks:
+    - thinknyx
+    depends_on:
+    - postgres
+  nodejs:
+    container_name: nodejs
+    image: sabbir/nodejs-app:v1
+    environment:
+    - DB_URL=postgres
+    - DB_PWD=india123
+    - DB_USER=postgres
+    depends_on:
+    - database_setup
+    networks:
+    - thinknyx
+    ports:
+    - "31000:4000"
+compose file=======docker-compose.yml
+
+docker-compose up
+
+=============================================
+
+335  docker-compose up -d
+  336  docker container ls 
+  337  docker-compose down
+  338  docker container ls -a
+  339  docker volume ls
+  340  docker-compose up -d
+  341  docker-compose down --volumes
+version: "3.9"
+networks:
+  thinknyx_database:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.10.10.0/24
+        gateway: "10.10.10.10"
+  thinknyx_frontend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 20.20.20.0/24
+        gateway: "20.20.20.20"
+volumes:
+  postgres_data: {}
+services:
+  postgres:
+    container_name: database
+    image: postgres:13.6
+    environment: 
+    - POSTGRES_PASSWORD=india123
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+    networks:
+    - thinknyx_database
+    - thinknyx_frontend
+  database_setup:
+    container_name: database_setup
+    image: sabbir/nodejs-app:database-setup
+    environment:
+    - DB_USER=postgres
+    - DB_URL=postgres
+    - PGPASSWORD=india123
+    networks:
+    - thinknyx_database
+    depends_on:
+    - postgres
+  nodejs:
+    container_name: nodejs
+    image: sabbir/nodejs-app:v1
+    environment:
+    - DB_URL=postgres
+    - DB_PWD=india123
+    - DB_USER=postgres
+    depends_on:
+    - database_setup
+    networks:
+    - thinknyx_frontend
+    ports:
+    - "31000:4000"
+  345  docker-compose up -d
+  346  docker container inspect database
+
+//more efficient way
+=======================================================
+version: "3.9"
+networks:
+  thinknyx_database:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.10.10.0/24
+        gateway: "10.10.10.10"
+  thinknyx_frontend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 20.20.20.0/24
+        gateway: "20.20.20.20"
+volumes:
+  postgres_data: {}
+services:
+  postgres:
+    container_name: database
+    image: postgres:13.6
+    environment: 
+    - POSTGRES_PASSWORD=india123
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+    networks:
+    - thinknyx_database
+    - thinknyx_frontend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  database_setup:
+    container_name: database_setup
+    image: sabbir/nodejs-app:database-setup
+    environment:
+    - DB_USER=postgres
+    - DB_URL=postgres
+    - PGPASSWORD=india123
+    - WAIT_SLEEP_INTERVAL=5
+    - WAIT_HOSTS=postgres:5432
+    networks:
+    - thinknyx_database
+    depends_on:
+      postgres:
+        condition: service_healthy
+  nodejs:
+    container_name: nodejs
+    image: sabbir/nodejs-app:v1
+    environment:
+    - DB_URL=postgres
+    - DB_PWD=india123
+    - DB_USER=postgres
+    depends_on:
+    - database_setup
+    networks:
+    - thinknyx_frontend
+    ports:
+    - "31000:4000"
+
+sabbirp/thinknyxvote:v1
+31000:80
+voting
+sabbirp/thinknyxredis:v1
+redis
+sabbirp/thinknyxworker:v1
+worker
+sabbirp/thinknyxdb:v1
+db
+sabbirp/thinknyxresult:v1
+32000:80
+result
